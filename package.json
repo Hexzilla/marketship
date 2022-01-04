@@ -1,0 +1,20 @@
+{
+  "name": "shipshop",
+  "version": "1.0.0",
+  "license": "ISC",
+  "description": "",
+  "main": "package.json",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "deploy": "./deploy.sh local",
+    "test": "truffle test"
+  },
+  "author": "@mattdlockyer matt@harmony.one",
+  "dependencies": {
+    "@harmony-js/core": "^0.1.57",
+    "@openzeppelin/contracts": "^4.4.1",
+    "@truffle/hdwallet-provider": "^2.0.0"
+  }
+}
