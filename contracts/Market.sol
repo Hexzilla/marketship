@@ -1,13 +1,14 @@
-// contracts/GameItem.sol
+// contracts/Market.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
-import "./GameItem.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+import "./Mercury.sol";
+
 contract Market is Ownable, ReentrancyGuard {
-	GameItem gameItem;
+	Mercury private mercury;
 
     //inventory
 	struct Item {
@@ -22,8 +23,8 @@ contract Market is Ownable, ReentrancyGuard {
 
     mapping(uint256 => uint256) private indexTokens;
 
-    constructor(GameItem _gameItem) {
-		gameItem = _gameItem;
+    constructor(Mercury _mercury) {
+		mercury = _mercury;
 	}
 
     function addItem(uint128 price, string memory url) public onlyOwner returns (uint256) {
@@ -37,14 +38,21 @@ contract Market is Ownable, ReentrancyGuard {
 		items[index] = Item(msg.sender, 0, price, url);
 	}
 
-    function mint(address to, uint256 index) public onlyOwner returns (uint256) {
+    function mint(uint256 index) public returns (uint256) {
+		require(index >= 0, "Invalid item index");
         require(index < totalItems, "Invalid item index");
-		uint256 tokenId = _mint(to, index);
+		require(items[index].owner == msg.sender, "Invalid owner");
+		
+		uint256 tokenId = _mint(msg.sender, index);
         indexTokens[index] = tokenId;
         return tokenId;
 	}
 
-    function burn(uint256 index) public onlyOwner {
+    function burn(uint256 index) public {
+		require(index >= 0, "Invalid item index");
+        require(index < totalItems, "Invalid item index");
+		require(items[index].owner == msg.sender, "Invalid owner");
+
         _burn(index);
     }
 
@@ -53,7 +61,7 @@ contract Market is Ownable, ReentrancyGuard {
 		require(minted == 0, "Item already minted");
 
         items[index].minted = 1;
-		return gameItem.mint(to, items[index].url);
+		return mercury.mint(to, items[index].url);
 	}
 
     function _burn(uint256 index) internal {
@@ -64,6 +72,6 @@ contract Market is Ownable, ReentrancyGuard {
         require(tokenId != 0, "Invalid token ID");
 
         items[index].minted = 0;
-		gameItem.burn(tokenId);
+		mercury.burn(tokenId);
 	}
 }

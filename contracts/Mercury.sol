@@ -1,6 +1,6 @@
-// contracts/GameItem.sol
+// contracts/Mercury.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -8,14 +8,14 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract GameItem is Ownable, ERC721, ERC721URIStorage, AccessControl {
+contract Mercury is Ownable, ERC721, ERC721URIStorage, AccessControl {
     // Create a new role identifier for the minter role
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("GameItem", "ITM") {}
+    constructor() ERC721("Mercury", "MEQ") {}
 
     modifier onlyMinter() {
         require(hasRole(MINTER_ROLE, msg.sender), "Caller is not a minter");

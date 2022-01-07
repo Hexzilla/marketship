@@ -1,12 +1,22 @@
-var GameItem = artifacts.require("GameItem");
-var Market = artifacts.require("Market");
+const Mercury = artifacts.require("Mercury");
+const Market = artifacts.require("Market");
+const Resolver = artifacts.require("Resolver");
+const Rent = artifacts.require("Rent");
 
-module.exports = function (deployer) {
+/*module.exports = function (deployer) {
 	deployer.then(function () {
-		return deployer.deploy(GameItem).then(function (gameItem) {
-            return deployer.deploy(Market, gameItem.address).then(async function (market) {
-                return gameItem.addMinter(market.address)
+		return deployer.deploy(Mercury).then(function (mercury) {
+            return deployer.deploy(Market, mercury.address).then(async function (market) {
+                return mercury.addMinter(market.address)
             })
 		})
 	})
+}*/
+
+module.exports = async function (deployer) {
+	console.log("deployer:", deployer)
+	const mercury = await deployer.deploy(Mercury);
+	const market = await deployer.deploy(Market, mercury.address);
+	mercury.addMinter(market.address);
+	//const resolver = await deployer.deploy(Resolver, deployer);
 }
